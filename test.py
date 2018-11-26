@@ -11,11 +11,12 @@ img = cv.imread('1.tif',0)
 cv.namedWindow('original', cv.WINDOW_NORMAL)
 cv.setMouseCallback('original',draw_circle)
 
+hist = cv.calcHist([img],[0],None,[256],[0,256])
+plt.plot(hist)
+plt.show()
+
 while 1:
-	cv.imshow('original',img) 
-	hist = cv.calcHist([img],[0],None,[256],[0,256])
-	plt.plot(hist)
-	plt.show()
+	cv.imshow('original',img) 	
 	if cv.waitKey(100) & 0xFF == 27:
 		break 
 
