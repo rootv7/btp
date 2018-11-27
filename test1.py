@@ -58,7 +58,7 @@ output = cv.connectedComponentsWithStats(img1, 4, cv.CV_32S)
 
 max_val = 0
 max_label = 1 
-for i in range(len(output[2])):
+for i in range(output[0]):
 	if i == 0:
 		continue
 	if output[2][i][cv.CC_STAT_AREA] > max_val:
@@ -132,9 +132,6 @@ print(height,width)
 rowc = 10
 colc = 6
 
-sr = 1
-sc = 1
-
 wc = width/colc
 hc = height/rowc
 
@@ -182,15 +179,21 @@ output = cv.connectedComponentsWithStats(img3, 4, cv.CV_32S)
 print(output[0],output[2],output[3])
 # cell = img2[(sr-1)*hc:sr*hc,(sc-1)*wc:sc*wc]
 
-cor = np.zeros((colc+1,rowc+1,2),dtype=int)
+#print(avg_area)
+
+cor = np.ones((colc+1,rowc+1,3),dtype=int)*-1
 
 for i in range(output[0]):
 	if i==0:
 		continue
 	x = int(round(output[3][i][0]/wc,0))
 	y = int(round(output[3][i][1]/hc,0))
+	if cor[x][y][2] > output[2][i][cv.CC_STAT_AREA]:
+		continue
+	print(x,y,i)
 	cor[x][y][0] = output[3][i][0]
 	cor[x][y][1] = output[3][i][1]
+	cor[x][y][2] = output[2][i][cv.CC_STAT_AREA]
 	if x==0:
 		cor[x][y][0] = 0
 	if y==0:
@@ -198,17 +201,21 @@ for i in range(output[0]):
 	if x==colc:
 		cor[x][y][0] = width-1
 	if y==rowc:
-		cor[x][y][0] = height-1
+		cor[x][y][1] = height-1
 
 print(cor)
 
-cell = img2[cor[sc-1][sr-1][1]:cor[sc][sr][1],cor[sc-1][sr-1][0]:cor[sc][sr][0]]
+while 1:
+	sc=int(raw_input("Column="))
+	sr=int(raw_input("Row="))
 
-cv.namedWindow('changed', cv.WINDOW_NORMAL)
-cv.imshow('changed', cell)
+	cell = img2[cor[sc-1][sr-1][1]:cor[sc][sr][1],cor[sc-1][sr-1][0]:cor[sc][sr][0]]
 
-cv.waitKey(0)
-cv.destroyWindow('changed')
+	cv.namedWindow('changed', cv.WINDOW_NORMAL)
+	cv.imshow('changed', cell)
 
-cv.imwrite('1saveda.png',cell)
+	cv.waitKey(0)
+	cv.destroyWindow('changed')
+
+	cv.imwrite('1saveda.png',cell)
 

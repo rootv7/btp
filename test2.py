@@ -37,7 +37,6 @@ hist = [round(x/10,0)*10 for x in hist]
 plt.plot(hist)
 plt.show()
 
-
 i = 1
 maxv = 0
 while i < len(hist):
